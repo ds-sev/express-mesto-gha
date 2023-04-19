@@ -1,7 +1,9 @@
 const Card = require('../models/card');
 
-module.exports.getCards = () => {
-  Card.find({});
+module.exports.getCards = (req, res) => {
+  Card.find({})
+  .then((cards) => res.send(cards))
+  .catch((err) => errorsHandler(res, err));
 };
 
 module.exports.createCard = (req, res) => {
