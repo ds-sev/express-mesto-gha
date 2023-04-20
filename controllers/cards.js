@@ -32,6 +32,8 @@ module.exports.deleteCard = (req, res) => {
     .catch((err) => {
       if (err.message === 'Not found') {
         res.status(notFound).send({ message: 'Карточка с указанным id не найдена. ' });
+      } else if (err.name === 'CastError') {
+        res.status(badRequest).send({ message: 'Некорректный формат id карточки.' });
       } else {
         res.status(internalServerError).send({ message: 'На сервере произошла ошибка.' });
       }
@@ -51,6 +53,8 @@ module.exports.likeCard = (req, res) => {
     .catch((err) => {
       if (err.message === 'Not found') {
         res.status(notFound).send({ message: 'Передан несуществующий id карточки.' });
+      } else if (err.name === 'CastError') {
+        res.status(badRequest).send({ message: 'Некорректный формат id карточки.' });
       } else {
         res.status(internalServerError).send({ message: 'На сервере произошла ошибка.' });
       }
@@ -70,6 +74,8 @@ module.exports.dislikeCard = (req, res) => {
     .catch((err) => {
       if (err.message === 'Not found') {
         res.status(notFound).send({ message: 'Передан несуществующий id карточки.' });
+      } else if (err.name === 'CastError') {
+        res.status(badRequest).send({ message: 'Некорректный формат id карточки.' });
       } else {
         res.status(internalServerError).send({ message: 'На сервере произошла ошибка.' });
       }
