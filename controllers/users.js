@@ -4,12 +4,10 @@ const User = require('../models/user');
 // GET USER INFO BY ID
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
-    .orFail(() => {
-      throw new Error('Not found');
-    })
+    .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.message === 'Not found') {
+      if (err.name === 'DocumentNotFoundError') {
         res.status(notFound).send({ message: 'Запрашиваемый пользователь не найден.' });
       } else if (err.name === 'CastError') {
         res.status(badRequest).send({ message: 'Некорректный формат id пользователя.' });
@@ -46,12 +44,10 @@ module.exports.updateUserInfo = (req, res) => {
     { name, about },
     { new: true, runValidators: true },
   )
-    .orFail(() => {
-      throw new Error('Not found');
-    })
+    .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.message === 'Not found') {
+      if (err.name === 'DocumentNotFoundError') {
         res.status(notFound).send({ message: 'Пользователь с указанным id не найден. ' });
       } else if (err instanceof mongoose.Error.ValidationError) {
         res.status(badRequest).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
@@ -69,12 +65,10 @@ module.exports.updateUserAvatar = (req, res) => {
     { avatar },
     { new: true, runValidators: true },
   )
-    .orFail(() => {
-      throw new Error('Not found');
-    })
+    .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.message === 'Not found') {
+      if (err.name === 'DocumentNotFoundError') {
         res.status(notFound).send({ message: 'Пользователь с указанным id не найден. ' });
       } else if (err instanceof mongoose.Error.ValidationError) {
         res.status(badRequest).send({ message: 'Переданы некорректные данные при обновлении профиля.' });

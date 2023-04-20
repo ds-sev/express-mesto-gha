@@ -12,7 +12,6 @@ module.exports.createCard = (req, res) => {
   const id = req.user._id;
   const { name, link } = req.body;
   Card.create({ name, link, owner: id })
-    .then((card) => card.populate('owner'))
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
@@ -25,12 +24,10 @@ module.exports.createCard = (req, res) => {
 // DELETE CARD BY ID
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .orFail(() => {
-      throw new Error('Not found');
-    })
+    .orFail()
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.message === 'Not found') {
+      if (err.name === 'DocumentNotFoundError') {
         res.status(notFound).send({ message: 'Карточка с указанным id не найдена. ' });
       } else if (err.name === 'CastError') {
         res.status(badRequest).send({ message: 'Некорректный формат id карточки.' });
@@ -46,12 +43,10 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => {
-      throw new Error('Not found');
-    })
+    .orFail()
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.message === 'Not found') {
+      if (err.name === 'DocumentNotFoundError') {
         res.status(notFound).send({ message: 'Передан несуществующий id карточки.' });
       } else if (err.name === 'CastError') {
         res.status(badRequest).send({ message: 'Некорректный формат id карточки.' });
@@ -67,12 +62,10 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => {
-      throw new Error('Not found');
-    })
+    .orFail()
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.message === 'Not found') {
+      if (err.name === 'DocumentNotFoundError') {
         res.status(notFound).send({ message: 'Передан несуществующий id карточки.' });
       } else if (err.name === 'CastError') {
         res.status(badRequest).send({ message: 'Некорректный формат id карточки.' });
