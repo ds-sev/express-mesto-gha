@@ -9,9 +9,10 @@ module.exports.getCards = (req, res) => {
 };
 // CREATE NEW CARD
 module.exports.createCard = (req, res) => {
-  console.log(req.user._id);
+  const id = req.user._id;
   const { name, link } = req.body;
-  Card.create({ name, link })
+  Card.create({ name, link, owner: id })
+    .then((card) => card.populate('owner'))
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
@@ -23,7 +24,7 @@ module.exports.createCard = (req, res) => {
 };
 // DELETE CARD BY ID
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
+  Card.findByIdAndRemove(req.params.cardId)
     .orFail(() => {
       throw new Error('Not found');
     })
@@ -39,7 +40,7 @@ module.exports.deleteCard = (req, res) => {
 // LIKE CARD BY ID
 module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
-    req.params.id,
+    req.params.cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
@@ -58,7 +59,7 @@ module.exports.likeCard = (req, res) => {
 // DISLIKE CARD BY ID
 module.exports.dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
-    req.params.id,
+    req.params.cardId,
     { $pull: { likes: req.user._id } },
     { new: true },
   )
