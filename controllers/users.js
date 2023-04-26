@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 const { badRequest, notFound, internalServerError } = require('../utils/errors');
 const User = require('../models/user');
 // GET USER INFO BY ID
@@ -24,8 +25,13 @@ module.exports.getUsers = (req, res) => {
 };
 // CREATE NEW USER
 module.exports.createUser = (req, res) => {
-  const { email, password, name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
+  const {
+    email, password, name, about, avatar,
+  } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hashedPassword) => User.create({
+      email, hashedPassword, name, about, avatar,
+    }))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
