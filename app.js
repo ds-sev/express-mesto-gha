@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const express = require('express');
-const { celebrate, Joi } = require('celebrate');
+const { celebrate, Joi, errors } = require('celebrate');
 const { notFound } = require('./utils/errors');
 
 const { login, createUser } = require('./controllers/users');
@@ -45,6 +45,8 @@ app.use('/cards', require('./routes/cards'));
 app.use('*', (req, res) => {
   res.status(notFound).send({ message: 'Страница не найдена' });
 });
+
+app.use(errors())
 
 app.listen(PORT, () => {
   // console.log(`App listening on port ${PORT}`);
