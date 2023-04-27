@@ -1,13 +1,10 @@
-const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 const User = require('../models/user');
-const {
-  badRequest, unauthorized, notFound, internalServerError,
-} = require('../utils/errors');
+const { unauthorized } = require('../utils/errors');
 const errors = require('../middlewares/errors')
 
 // GET USER INFO BY ID

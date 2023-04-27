@@ -6,6 +6,4 @@ const ERROR_CODE = {
   internalServerError: 500,
 };
 
-
-
 module.exports = ERROR_CODE;

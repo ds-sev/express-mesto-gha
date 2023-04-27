@@ -20,7 +20,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 app.post('/signin', login);
 app.post('/signup', createUser);
 
@@ -32,10 +31,6 @@ app.use('*', (req, res) => {
   res.status(notFound).send({ message: 'Страница не найдена' });
 });
 
-
-
-
-
 app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
+  // console.log(`App listening on port ${PORT}`);
 });
