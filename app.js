@@ -18,6 +18,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
+app.use('/signin', require('./routes/signin'));
+app.use('/signup', require('./routes/signup'));
 
 app.use('*', (req, res) => {
   res.status(notFound).send({ message: 'Страница не найдена' });
