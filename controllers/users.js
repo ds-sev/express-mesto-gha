@@ -1,7 +1,14 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const { badRequest, notFound, internalServerError } = require('../utils/errors');
+const jwt = require('jsonwebtoken');
+
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 const User = require('../models/user');
+const {
+  badRequest, unauthorized, notFound, internalServerError,
+} = require('../utils/errors');
+
 // GET USER INFO BY ID
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
@@ -29,8 +36,8 @@ module.exports.createUser = (req, res) => {
     email, password, name, about, avatar,
   } = req.body;
   bcrypt.hash(password, 10)
-    .then((hashedPassword) => User.create({
-      email, hashedPassword, name, about, avatar,
+    .then((hash) => User.create({
+      email, password: hash, name, about, avatar,
     }))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
@@ -81,5 +88,27 @@ module.exports.updateUserAvatar = (req, res) => {
       } else {
         res.status(internalServerError).send({ message: 'На сервере произошла ошибка.' });
       }
+    });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
+        { expiresIn: '7d' },
+      );
+      res.cookie('jwt', token, {
+        httpOnly: true,
+      });
+      res.send({ token });
+    })
+    .catch((err) => {
+      res
+        .status(unauthorized)
+        .send({ message: err.message });
     });
 };
