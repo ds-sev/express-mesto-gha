@@ -30,7 +30,12 @@ module.exports.createUser = (req, res) => {
     .then((hash) => User.create({
       email, password: hash, name, about, avatar,
     }))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send({
+      email: user.email,
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+    }))
     .catch((err) => errors(err, res, 'при создании пользователя'))
 };
 // UPDATE USER INFORMATION
