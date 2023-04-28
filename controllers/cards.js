@@ -22,20 +22,27 @@ module.exports.createCard = (req, res) => {
     });
 };
 // DELETE CARD BY ID
-module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+module.exports.deleteCard = (req, res, next) => {
+  Card.findById(req.params.cardId)
     .orFail()
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
-        res.status(notFound).send({ message: 'Карточка с указанным id не найдена. ' });
-      } else if (err.name === 'CastError') {
-        res.status(badRequest).send({ message: 'Некорректный формат id карточки.' });
-      } else {
-        res.status(internalServerError).send({ message: 'На сервере произошла ошибка.' });
+    .then((card) => {
+      const owner = card.owner.toString()
+      if (req.user._id === owner) {
+        Card.deleteOne(card)
+          .then(() => res.send({ data: card }))
+          .catch(next)
+          .catch((err) => {
+            if (err.name === 'DocumentNotFoundError') {
+              res.status(notFound).send({ message: 'Карточка с указанным id не найдена. ' });
+            } else if (err.name === 'CastError') {
+              res.status(badRequest).send({ message: 'Некорректный формат id карточки.' });
+            } else {
+              res.status(internalServerError).send({ message: 'На сервере произошла ошибка.' });
+            }
+          });
       }
-    });
-};
+    })
+}
 // LIKE CARD BY ID
 module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(

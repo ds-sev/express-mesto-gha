@@ -10,7 +10,7 @@ const errors = require('../middlewares/errors')
 // GET USER INFO BY ID
 module.exports.getUser = (req, res) => {
   const id = req.params.userId || req.user._id
-  console.log(`logged: ${id}`)
+  // console.log(`logged: ${id}`)
   User.findById(id)
     .orFail()
     .then((user) => res.send({ data: user }))
