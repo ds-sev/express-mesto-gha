@@ -9,11 +9,11 @@ const errors = require('../middlewares/errors')
 
 // GET USER INFO BY ID
 module.exports.getUser = (req, res) => {
-  const userId = req.user._id;
-  User.findById(userId)
+  const id = req.params.userId || req.user._id
+  User.findById(id)
     .orFail()
     .then((user) => res.send({ data: user }))
-    .catch((err) => errors(err, req))
+    .catch((err) => errors(err, res))
 };
 // GET ALL USERS
 module.exports.getUsers = (req, res) => {
