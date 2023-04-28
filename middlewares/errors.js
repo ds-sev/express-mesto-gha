@@ -13,14 +13,14 @@ module.exports = ((err, res, message = undefined) => {
       .send({ message: 'Пользователь с таким адресом уже зарегистрирован.' })
   }
   if (err.name === 'DocumentNotFoundError') {
-    res
+    return res
       .status(ERROR_CODE.notFound)
-      .send({ message: 'Запрашиваемый пользователь не найден.' });
+      .send({ message: 'Данные с запрошенным id не найдены.' });
   }
   if (err.name === 'CastError') {
-    res
+    return res
       .status(ERROR_CODE.badRequest)
-      .send({ message: 'Некорректный формат id пользователя.' });
+      .send({ message: 'Некорректный формат id в запросе.' });
   }
   return res
     .status(ERROR_CODE.internalServerError)

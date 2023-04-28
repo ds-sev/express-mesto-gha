@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Card = require('../models/card');
 const { internalServerError, badRequest, notFound } = require('../utils/errors');
+const errors = require('../middlewares/errors')
 // GET ALL CARDS
 module.exports.getCards = (req, res) => {
   Card.find({})
@@ -52,15 +53,7 @@ module.exports.likeCard = (req, res) => {
   )
     .orFail()
     .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
-        res.status(notFound).send({ message: 'Передан несуществующий id карточки.' });
-      } else if (err.name === 'CastError') {
-        res.status(badRequest).send({ message: 'Некорректный формат id карточки.' });
-      } else {
-        res.status(internalServerError).send({ message: 'На сервере произошла ошибка.' });
-      }
-    });
+    .catch((err) => errors(err, res))
 };
 // DISLIKE CARD BY ID
 module.exports.dislikeCard = (req, res) => {
