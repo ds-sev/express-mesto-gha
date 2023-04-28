@@ -3,10 +3,10 @@ const { celebrate, Joi } = require('celebrate')
 const {
   getUsers, getUser, updateUserInfo, updateUserAvatar,
 } = require('../controllers/users');
-const { userDataValidate } = require('../middlewares/userDataValidate')
+const { userIdValidate } = require('../middlewares/validate')
 
 router.get('/', getUsers);
-router.get('/:userId', userDataValidate, getUser);
+router.get('/:userId', userIdValidate, getUser);
 router.get('/me', getUser);
 router.patch('/me', celebrate({
   body: Joi.object().keys({
