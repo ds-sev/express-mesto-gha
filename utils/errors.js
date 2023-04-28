@@ -5,6 +5,6 @@ const ERROR_CODE = {
   notFound: 404,
   conflict: 409,
   internalServerError: 500,
-};
+}
 
-module.exports = ERROR_CODE;
+module.exports = ERROR_CODE

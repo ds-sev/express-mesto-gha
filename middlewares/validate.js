@@ -29,6 +29,6 @@ module.exports.userIdValidate = celebrate({
 
 module.exports.urlValidate = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().regex(/http(s)?:\/\/(w{3}.)?[a-z0-9.-]+\/[a-z0-9.\-_~:/?#[\]@!$&'()*+,;=]?#?/i),
+    avatar: Joi.string().regex(CUSTOM_PATTERNS.URL),
   }),
 })

@@ -15,12 +15,12 @@ module.exports = ((err, res, message = undefined) => {
   if (err.name === 'DocumentNotFoundError') {
     return res
       .status(ERROR_CODE.notFound)
-      .send({ message: 'Данные с запрошенным id не найдены.' });
+      .send({ message: 'Данные с запрошенным id не найдены.' })
   }
   if (err.name === 'CastError') {
     return res
       .status(ERROR_CODE.badRequest)
-      .send({ message: 'Некорректный формат id в запросе.' });
+      .send({ message: 'Некорректный формат id в запросе.' })
   }
   return res
     .status(ERROR_CODE.internalServerError)
