@@ -5,8 +5,8 @@ const {
 const { userDataValidate, userIdValidate, urlValidate } = require('../middlewares/validate')
 
 router.get('/', getUsers);
-router.get('/:userId', userIdValidate, getUser);
 router.get('/me', getUser);
+router.get('/:userId', userIdValidate, getUser);
 router.patch('/me', userDataValidate, updateUserInfo);
 router.patch('/me/avatar', urlValidate, updateUserAvatar);
 
