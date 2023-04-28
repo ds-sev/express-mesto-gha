@@ -7,3 +7,9 @@ module.exports.cardDataValidate = celebrate({
     link: Joi.string().required().regex(CUSTOM_PATTERNS.URL),
   }),
 })
+
+module.exports.cardIdValidate = celebrate({
+  body: Joi.object().keys({
+    cardId: Joi.string().hex().length(24),
+  }),
+})
