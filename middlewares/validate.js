@@ -14,8 +14,21 @@ module.exports.cardIdValidate = celebrate({
   }),
 })
 
+module.exports.userDataValidate = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+  }),
+})
+
 module.exports.userIdValidate = celebrate({
   params: Joi.object().keys({
     userId: Joi.string().required().hex().length(24),
+  }),
+})
+
+module.exports.urlValidate = celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string().regex(/http(s)?:\/\/(w{3}.)?[a-z0-9.-]+\/[a-z0-9.\-_~:/?#[\]@!$&'()*+,;=]?#?/i),
   }),
 })

@@ -10,7 +10,6 @@ const errors = require('../middlewares/errors')
 // GET USER INFO BY ID
 module.exports.getUser = (req, res) => {
   const id = req.params.userId || req.user._id
-  // console.log(`logged: ${id}`)
   User.findById(id)
     .orFail()
     .then((user) => res.send({ data: user }))
@@ -73,7 +72,7 @@ module.exports.login = (req, res) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
+        NODE_ENV === 'production' ? JWT_SECRET : 'secret-key',
         { expiresIn: '7d' },
       )
       res.cookie('jwt', token, {
