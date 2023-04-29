@@ -10,14 +10,14 @@ module.exports.cardDataValidate = celebrate({
 
 module.exports.cardIdValidate = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().hex().length(24),
+    cardId: Joi.string().required().hex().length(24),
   }),
 })
 
 module.exports.userDataValidate = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
+    name: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(30),
   }),
 })
 
@@ -29,6 +29,23 @@ module.exports.userIdValidate = celebrate({
 
 module.exports.urlValidate = celebrate({
   body: Joi.object().keys({
+    avatar: Joi.string().required().regex(CUSTOM_PATTERNS.URL),
+  }),
+})
+
+module.exports.userSignInValidate = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email({ tlds: { allow: false } }),
+    password: Joi.string().required(),
+  }),
+})
+
+module.exports.userSignUpValidate = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email({ tlds: { allow: false } }),
+    password: Joi.string().required(),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
     avatar: Joi.string().regex(CUSTOM_PATTERNS.URL),
   }),
 })

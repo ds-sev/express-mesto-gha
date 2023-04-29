@@ -1,5 +1,5 @@
 const Card = require('../models/card')
-const { forbidden } = require('../utils/errors')
+const { forbidden, created } = require('../utils/requestStatusCodes')
 const errors = require('../middlewares/errors')
 // GET ALL CARDS
 module.exports.getCards = (req, res) => {
@@ -12,7 +12,7 @@ module.exports.createCard = (req, res) => {
   const id = req.user._id
   const { name, link } = req.body
   Card.create({ name, link, owner: id })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(created).send({ data: card }))
     .catch((err) => errors(err, res, 'при создании карточки'))
 }
 // DELETE CARD BY ID
@@ -22,7 +22,7 @@ module.exports.deleteCard = (req, res, next) => {
     .then((card) => {
       const owner = card.owner.toString()
       if (req.user._id === owner) {
-        Card.deleteOne(card)
+        card.deleteOne()
           .then(() => res.send({ message: 'Карточка успешно удалена.' }))
           .catch(next)
       } else {

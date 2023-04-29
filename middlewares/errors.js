@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const ERROR_CODE = require('../utils/errors')
+const ERROR_CODE = require('../utils/requestStatusCodes')
 
 module.exports = ((err, res, message = undefined) => {
   if (err instanceof mongoose.Error.ValidationError) {

@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 const { NODE_ENV, JWT_SECRET } = process.env
 
 const User = require('../models/user')
-const { unauthorized } = require('../utils/errors')
+const { unauthorized, created } = require('../utils/requestStatusCodes')
 const errors = require('../middlewares/errors')
 
 // GET USER INFO BY ID
@@ -30,12 +30,11 @@ module.exports.createUser = (req, res) => {
     .then((hash) => User.create({
       email, password: hash, name, about, avatar,
     }))
-    .then((user) => res.send({
-      email: user.email,
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
-    }))
+    .then((user) => {
+      const userDataObject = user.toObject()
+      delete userDataObject.password
+      res.status(created).send({ data: userDataObject })
+    })
     .catch((err) => errors(err, res, 'при создании пользователя'))
 }
 // UPDATE USER INFORMATION
@@ -72,7 +71,7 @@ module.exports.login = (req, res) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'secret-key',
+        process.env.NODE_ENV === 'production' ? process.env.NODE_ENV : 'secret-key',
         { expiresIn: '7d' },
       )
       res.cookie('jwt', token, {
