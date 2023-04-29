@@ -4,7 +4,8 @@ const errors = require('../middlewares/errors')
 // GET ALL CARDS
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.send(cards))
+    .populate(['owner', 'likes'])
+    .then((cards) => res.send({ data: cards }))
     .catch((err) => errors(err, res))
 }
 // CREATE NEW CARD
@@ -39,6 +40,7 @@ module.exports.likeCard = (req, res) => {
     { new: true },
   )
     .orFail()
+    .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))
     .catch((err) => errors(err, res))
 }
@@ -50,6 +52,7 @@ module.exports.dislikeCard = (req, res) => {
     { new: true },
   )
     .orFail()
+    .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))
     .catch((err) => errors(err, res))
 }
