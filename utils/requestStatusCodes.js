@@ -1,4 +1,6 @@
-const ERROR_CODE = {
+const STATUS_CODE = {
+  OK: 200,
+  created: 201,
   badRequest: 400,
   unauthorized: 401,
   forbidden: 403,
@@ -7,10 +9,4 @@ const ERROR_CODE = {
   internalServerError: 500,
 }
 
-const SUCCESS_CODE = {
-  OK: 200,
-  created: 201,
-}
-
-module.exports = ERROR_CODE
-module.exports = SUCCESS_CODE
+module.exports = STATUS_CODE

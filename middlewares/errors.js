@@ -1,28 +1,28 @@
 const mongoose = require('mongoose')
-const ERROR_CODE = require('../utils/requestStatusCodes')
+const STATUS_CODE = require('../utils/requestStatusCodes')
 
 module.exports = ((err, res, message = undefined) => {
   if (err instanceof mongoose.Error.ValidationError) {
     return res
-      .status(ERROR_CODE.badRequest)
+      .status(STATUS_CODE.badRequest)
       .send({ message: `Переданы некорректные данные ${message}.` })
   }
   if (err.code === 11000) {
     return res
-      .status(ERROR_CODE.conflict)
+      .status(STATUS_CODE.conflict)
       .send({ message: 'Пользователь с таким адресом уже зарегистрирован.' })
   }
-  if (err.name === 'DocumentNotFoundError') {
+  if (err instanceof mongoose.Error.DocumentNotFoundError) {
     return res
-      .status(ERROR_CODE.notFound)
+      .status(STATUS_CODE.notFound)
       .send({ message: 'Данные с запрошенным id не найдены.' })
   }
-  if (err.name === 'CastError') {
+  if (err instanceof mongoose.Error.CastError) {
     return res
-      .status(ERROR_CODE.badRequest)
+      .status(STATUS_CODE.badRequest)
       .send({ message: 'Некорректный формат id в запросе.' })
   }
   return res
-    .status(ERROR_CODE.internalServerError)
+    .status(STATUS_CODE.internalServerError)
     .send({ message: 'На сервере произошла ошибка.' })
 })

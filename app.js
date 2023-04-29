@@ -13,7 +13,6 @@ mongoose.connect(process.env.DB_CONN, {
   useNewUrlParser: true,
 })
 
-
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
