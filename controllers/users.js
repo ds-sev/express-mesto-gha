@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken')
 
 const User = require('../models/user')
 const { created } = require('../utils/requestStatusCodes')
-const errors = require('../middlewares/centralErrorHandler')
 
 // GET USER INFO BY ID
 module.exports.getUser = (req, res, next) => {
@@ -11,13 +10,13 @@ module.exports.getUser = (req, res, next) => {
   User.findById(id)
     .orFail()
     .then((user) => res.send({ data: user }))
-    .catch((err) => errors(err, req, res, next))
+    .catch(next)
 }
 // GET ALL USERS
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch((err) => errors(err, req, res, next))
+    .catch(next)
 }
 // CREATE NEW USER
 module.exports.createUser = (req, res, next) => {
@@ -80,10 +79,4 @@ module.exports.login = (req, res, next) => {
       res.send({ token })
     })
     .catch(next)
-    // .catch((err) => {
-    //   res
-    //     .status(unauthorized)
-    //     .send({ message: err.message })
-    // })
-    // .catch((err) => errors(err, req, res, next))
 }

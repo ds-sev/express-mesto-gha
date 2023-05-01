@@ -9,6 +9,6 @@ router.post('/signup', userSignUpValidate, createUser)
 router.use('/users', auth, require('./users'))
 router.use('/cards', auth, require('./cards'))
 
-router.use('*', (req, res, next) => next(new NotFound('Страница не найдена')))
+router.use('*', (req, res, next) => next(new NotFound()))
 
 module.exports = router

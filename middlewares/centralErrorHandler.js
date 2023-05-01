@@ -7,13 +7,13 @@ const Forbidden = require('../utils/customErrors/forbidden')
 
 module.exports = ((err, req, res, next) => {
   if (err instanceof Unauthorized) {
-    return res.status(err.code).send({ message: err.message })
+    return res.status(err.code).send({ message: err.message || 'Неправильный email или пароль.' })
   }
   if (err instanceof NotFound) {
-    return res.status(err.code).send({ message: err.message })
+    return res.status(err.code).send({ message: err.message || 'Страница не найдена.' })
   }
   if (err instanceof Forbidden) {
-    return res.status(err.code).send({ message: err.message })
+    return res.status(err.code).send({ message: err.message || 'Действие запрещено.' })
   }
   if (err.code === 11000) {
     return res
