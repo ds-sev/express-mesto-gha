@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const User = require('../models/user')
-const { unauthorized, created } = require('../utils/requestStatusCodes')
+const { created } = require('../utils/requestStatusCodes')
 const errors = require('../middlewares/centralErrorHandler')
 
 // GET USER INFO BY ID
@@ -33,7 +33,7 @@ module.exports.createUser = (req, res, next) => {
       delete userDataObject.password
       res.status(created).send({ data: userDataObject })
     })
-    .catch((err) => errors(err, req, res, next, 'при создании пользователя'))
+    .catch(next)
 }
 // UPDATE USER INFORMATION
 module.exports.updateUserInfo = (req, res, next) => {
@@ -46,7 +46,7 @@ module.exports.updateUserInfo = (req, res, next) => {
   )
     .orFail()
     .then((user) => res.send({ data: user }))
-    .catch((err) => errors(err, req, res, next, 'при обновлении профиля'))
+    .catch(next)
 }
 // UPDATE USER AVATAR
 module.exports.updateUserAvatar = (req, res, next) => {
@@ -59,7 +59,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
   )
     .orFail()
     .then((user) => res.send({ data: user }))
-    .catch((err) => errors(err, req, res, next, 'при обновлении аватара'))
+    .catch(next)
 }
 
 module.exports.login = (req, res, next) => {
@@ -79,10 +79,5 @@ module.exports.login = (req, res, next) => {
       })
       res.send({ token })
     })
-    .catch((err) => {
-      res
-        .status(unauthorized)
-        .send({ message: err.message })
-    })
-    .catch((err) => errors(err, req, res, next))
+    .catch(next)
 }
