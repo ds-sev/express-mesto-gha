@@ -1,6 +1,6 @@
 const Card = require('../models/card')
 const { forbidden, created } = require('../utils/requestStatusCodes')
-const errors = require('../middlewares/errors')
+const errors = require('../middlewares/centralErrorHandler')
 // GET ALL CARDS
 module.exports.getCards = (req, res) => {
   Card.find({})

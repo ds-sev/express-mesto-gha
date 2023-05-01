@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 
 const User = require('../models/user')
 const { unauthorized, created } = require('../utils/requestStatusCodes')
-const errors = require('../middlewares/errors')
+const errors = require('../middlewares/centralErrorHandler')
 
 // GET USER INFO BY ID
 module.exports.getUser = (req, res) => {
