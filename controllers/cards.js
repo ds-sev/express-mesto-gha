@@ -2,19 +2,19 @@ const Card = require('../models/card')
 const { forbidden, created } = require('../utils/requestStatusCodes')
 const errors = require('../middlewares/centralErrorHandler')
 // GET ALL CARDS
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .populate(['owner', 'likes'])
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => errors(err, res))
+    .catch(next)
 }
 // CREATE NEW CARD
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const id = req.user._id
   const { name, link } = req.body
   Card.create({ name, link, owner: id })
     .then((card) => res.status(created).send({ data: card }))
-    .catch((err) => errors(err, res, 'при создании карточки'))
+    .catch((err) => errors(err, req, res, next, 'при создании карточки'))
 }
 // DELETE CARD BY ID
 module.exports.deleteCard = (req, res, next) => {
@@ -30,10 +30,10 @@ module.exports.deleteCard = (req, res, next) => {
         res.status(forbidden).send({ message: 'Нельзя удалять чужие карточки.' })
       }
     })
-    .catch((err) => errors(err, res))
+    .catch((err) => errors(err, req, res, next))
 }
 // LIKE CARD BY ID
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -42,10 +42,10 @@ module.exports.likeCard = (req, res) => {
     .orFail()
     .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))
-    .catch((err) => errors(err, res))
+    .catch((err) => errors(err, req, res, next))
 }
 // DISLIKE CARD BY ID
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -54,5 +54,5 @@ module.exports.dislikeCard = (req, res) => {
     .orFail()
     .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))
-    .catch((err) => errors(err, res))
+    .catch((err) => errors(err, req, res, next))
 }

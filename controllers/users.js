@@ -6,21 +6,21 @@ const { unauthorized, created } = require('../utils/requestStatusCodes')
 const errors = require('../middlewares/centralErrorHandler')
 
 // GET USER INFO BY ID
-module.exports.getUser = (req, res) => {
+module.exports.getUser = (req, res, next) => {
   const id = req.params.userId || req.user._id
   User.findById(id)
     .orFail()
     .then((user) => res.send({ data: user }))
-    .catch((err) => errors(err, res))
+    .catch((err) => errors(err, req, res, next))
 }
 // GET ALL USERS
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch((err) => errors(err, res))
+    .catch((err) => errors(err, req, res, next))
 }
 // CREATE NEW USER
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
     email, password, name, about, avatar,
   } = req.body
@@ -33,10 +33,10 @@ module.exports.createUser = (req, res) => {
       delete userDataObject.password
       res.status(created).send({ data: userDataObject })
     })
-    .catch((err) => errors(err, res, 'при создании пользователя'))
+    .catch((err) => errors(err, req, res, next, 'при создании пользователя'))
 }
 // UPDATE USER INFORMATION
-module.exports.updateUserInfo = (req, res) => {
+module.exports.updateUserInfo = (req, res, next) => {
   const id = req.user._id
   const { name, about } = req.body
   User.findByIdAndUpdate(
@@ -46,10 +46,10 @@ module.exports.updateUserInfo = (req, res) => {
   )
     .orFail()
     .then((user) => res.send({ data: user }))
-    .catch((err) => errors(err, res, 'при обновлении профиля'))
+    .catch((err) => errors(err, req, res, next, 'при обновлении профиля'))
 }
 // UPDATE USER AVATAR
-module.exports.updateUserAvatar = (req, res) => {
+module.exports.updateUserAvatar = (req, res, next) => {
   const id = req.user._id
   const { avatar } = req.body
   User.findByIdAndUpdate(
@@ -59,10 +59,10 @@ module.exports.updateUserAvatar = (req, res) => {
   )
     .orFail()
     .then((user) => res.send({ data: user }))
-    .catch((err) => errors(err, res, 'при обновлении аватара'))
+    .catch((err) => errors(err, req, res, next, 'при обновлении аватара'))
 }
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body
 
   return User.findUserByCredentials(email, password)
@@ -84,5 +84,5 @@ module.exports.login = (req, res) => {
         .status(unauthorized)
         .send({ message: err.message })
     })
-    .catch((err) => errors(err, req))
+    .catch((err) => errors(err, req, res, next))
 }
