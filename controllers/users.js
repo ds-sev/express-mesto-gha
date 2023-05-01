@@ -80,4 +80,10 @@ module.exports.login = (req, res, next) => {
       res.send({ token })
     })
     .catch(next)
+    // .catch((err) => {
+    //   res
+    //     .status(unauthorized)
+    //     .send({ message: err.message })
+    // })
+    // .catch((err) => errors(err, req, res, next))
 }
