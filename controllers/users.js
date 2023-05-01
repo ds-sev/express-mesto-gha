@@ -1,17 +1,26 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-
 const User = require('../models/user')
 const { created } = require('../utils/requestStatusCodes')
 
-// GET USER INFO BY ID
-module.exports.getUser = (req, res, next) => {
-  const id = req.params.userId || req.user._id
+// GET USER INFO
+function getUser(res, id, next) {
   User.findById(id)
     .orFail()
     .then((user) => res.send({ data: user }))
     .catch(next)
 }
+// find authorized user
+module.exports.getCurrentUser = (req, res, next) => {
+  const currentUserId = req.user._id
+  getUser(res, currentUserId, next)
+}
+// find user in BD by ID
+module.exports.getTargetUser = (req, res, next) => {
+  const targetUserId = req.params.userId
+  getUser(res, targetUserId, next)
+}
+
 // GET ALL USERS
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -34,36 +43,33 @@ module.exports.createUser = (req, res, next) => {
     })
     .catch(next)
 }
-// UPDATE USER INFORMATION
-module.exports.updateUserInfo = (req, res, next) => {
+
+// UPDATE INFO MAIN FUNCTION
+function updateInfo(req, res, dataToUpdate, next) {
   const id = req.user._id
-  const { name, about } = req.body
   User.findByIdAndUpdate(
     id,
-    { name, about },
+    dataToUpdate,
     { new: true, runValidators: true },
   )
     .orFail()
     .then((user) => res.send({ data: user }))
     .catch(next)
 }
-// UPDATE USER AVATAR
+
+// user info update ctrl
+module.exports.updateUserInfo = (req, res, next) => {
+  const userData = req.body
+  updateInfo(req, res, userData, next)
+}
+// avatar update ctrl
 module.exports.updateUserAvatar = (req, res, next) => {
-  const id = req.user._id
-  const { avatar } = req.body
-  User.findByIdAndUpdate(
-    id,
-    { avatar },
-    { new: true, runValidators: true },
-  )
-    .orFail()
-    .then((user) => res.send({ data: user }))
-    .catch(next)
+  const newAvatarLink = req.body
+  updateInfo(req, res, newAvatarLink, next)
 }
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body
-
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
@@ -73,10 +79,9 @@ module.exports.login = (req, res, next) => {
       )
       res.cookie('jwt', token, {
         httpOnly: true,
-        sameSite: true,
         maxAge: 3600000 * 24 * 7,
       })
-      res.send({ token })
+      res.send({ message: 'Вы успешно вошли.' })
     })
     .catch(next)
 }

@@ -5,7 +5,6 @@ const express = require('express')
 const cookieParser = require('cookie-parser')
 const { errors } = require('celebrate')
 const routes = require('./routes/index')
-
 const centralErrorHandler = require('./middlewares/centralErrorHandler')
 
 const app = express();
