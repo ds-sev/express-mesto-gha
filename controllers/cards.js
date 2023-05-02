@@ -32,11 +32,12 @@ module.exports.deleteCard = (req, res, next) => {
     })
     .catch(next)
 }
-// LIKE CARD BY ID
-module.exports.likeCard = (req, res, next) => {
+
+// CARD REACTION FUNC
+function cardReaction(req, res, reaction, next) {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
+    reaction,
     { new: true },
   )
     .orFail()
@@ -44,15 +45,13 @@ module.exports.likeCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch(next)
 }
-// DISLIKE CARD BY ID
+// like card ctrl
+module.exports.likeCard = (req, res, next) => {
+  const putLike = { $addToSet: { likes: req.user._id } }
+  cardReaction(req, res, putLike, next)
+}
+// dislike card ctrl
 module.exports.dislikeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: req.user._id } },
-    { new: true },
-  )
-    .orFail()
-    .populate(['owner', 'likes'])
-    .then((card) => res.send({ data: card }))
-    .catch(next)
+  const deleteLike = { $pull: { likes: req.user._id } }
+  cardReaction(req, res, deleteLike, next)
 }
