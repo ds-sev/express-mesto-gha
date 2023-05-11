@@ -74,7 +74,7 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        process.env.NODE_ENV === 'production' ? process.env.NODE_ENV : 'secret-key',
+        process.env.NODE_ENV === 'production' ? process.env.SECRET_KEY : 'secret-key',
         { expiresIn: '7d' },
       )
       res.cookie('jwt', token, {
